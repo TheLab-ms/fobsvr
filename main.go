@@ -94,12 +94,12 @@ func main() {
 	go func() {
 		var lastRetry time.Duration
 		for range refresh {
-		start:
 			err := cache.Fill()
 			if err != nil {
 				slog.Error("unable to fill cache", "error", err)
 			} else {
 				lastRetry = 0
+				continue
 			}
 
 			if lastRetry == 0 {
@@ -110,7 +110,6 @@ func main() {
 				lastRetry = *resync
 			}
 			time.Sleep(lastRetry)
-			goto start
 		}
 	}()
 
