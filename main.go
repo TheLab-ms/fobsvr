@@ -29,11 +29,14 @@ func main() {
 	}
 
 	router := httprouter.New()
+	cache := newCache(k)
 	router.GET("/healthz", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		if c, _ := cache.Load(); c == nil {
+			w.WriteHeader(500) // wait for cache to warm before accepting requests
+		}
 		w.WriteHeader(204)
 	})
 
-	cache := newCache(k)
 	router.GET("/v1/fobs", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		if wait := r.URL.Query().Get("wait"); wait != "" {
 			waitDuration, err := time.ParseDuration(wait)
@@ -45,10 +48,6 @@ func main() {
 		}
 
 		users, hash := cache.Load()
-		if users == nil {
-			w.WriteHeader(412)
-			return
-		}
 		if hash != "" && hash == r.Header.Get("If-None-Match") {
 			w.WriteHeader(304)
 			return
