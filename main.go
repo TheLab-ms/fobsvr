@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
-	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -73,6 +72,7 @@ func main() {
 	})
 
 	refresh := make(chan struct{}, 1)
+	refresh <- struct{}{}
 	router.POST("/webhook", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		slog.Info("received webhook")
 		select {
@@ -98,7 +98,7 @@ func main() {
 		start:
 			err := cache.Fill()
 			if err != nil {
-				log.Printf("sync error: %s", err)
+				slog.Error("unable to fill cache", "error", err)
 			} else {
 				lastRetry = 0
 			}

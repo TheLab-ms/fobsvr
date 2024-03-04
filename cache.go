@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"log/slog"
 	"sort"
 	"sync"
 	"time"
@@ -39,6 +40,7 @@ func (c *cache) Fill() error {
 	defer c.lock.Unlock()
 
 	if c.hash == hash {
+		slog.Info("cache was filled but nothing changed")
 		return nil // nothing has changed
 	}
 	c.state = users
@@ -51,6 +53,7 @@ func (c *cache) Fill() error {
 		}
 	}
 
+	slog.Info("filled cache")
 	return nil
 }
 
