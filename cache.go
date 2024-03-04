@@ -21,7 +21,7 @@ type cache struct {
 }
 
 func newCache(k *keycloak) *cache {
-	return &cache{keycloak: k}
+	return &cache{keycloak: k, watchers: map[chan struct{}]struct{}{}}
 }
 
 func (c *cache) Fill() error {
