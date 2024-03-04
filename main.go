@@ -33,6 +33,7 @@ func main() {
 	router.GET("/healthz", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		if c, _ := cache.Load(); c == nil {
 			w.WriteHeader(500) // wait for cache to warm before accepting requests
+			return
 		}
 		w.WriteHeader(204)
 	})
