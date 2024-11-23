@@ -68,7 +68,7 @@ func main() {
 		}
 
 		// TODO: Actually store these somewhere
-		slog.Info("received event", "timestamp", e.Timestamp, "personID", e.PersonID, "fobID", e.FobID, "authorized", e.Authorized)
+		slog.Info("received event", "timestamp", e.Timestamp, "personID", e.PersonID, "fobID", e.FobID, "qrID", e.QRID, "authorized", e.Authorized)
 	})
 
 	refresh := make(chan struct{}, 1)
@@ -121,5 +121,6 @@ type Event struct {
 	Timestamp  int64  `json:"timestamp"`
 	PersonID   string `json:"personID"`
 	FobID      int64  `json:"fobID"`
+	QRID       int64  `json:"qrID"`
 	Authorized bool   `json:"authorized"`
 }

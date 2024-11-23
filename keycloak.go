@@ -157,7 +157,8 @@ func (k *keycloak) ensureToken(ctx context.Context) (*gocloak.JWT, error) {
 
 type AccessUser struct {
 	UserID string `json:"userID"`
-	FobID  int    `json:"fobID"`
+	FobID  int    `json:"fobID,omitempty"`
+	QRID   int    `json:"qrID,omitempty"`
 	TTL    int64  `json:"ttl"`
 }
 
@@ -168,7 +169,8 @@ func newAccessUser(kcuser *gocloak.User) *AccessUser {
 
 	attr := *kcuser.Attributes
 	fobID, _ := strconv.Atoi(firstElOrZeroVal(attr["keyfobID"]))
-	if fobID == 0 {
+	qrID, _ := strconv.Atoi(firstElOrZeroVal(attr["qrID"]))
+	if fobID == 0 && qrID == 0 {
 		return nil
 	}
 	if firstElOrZeroVal(attr["buildingAccessApprover"]) == "" {
@@ -178,6 +180,7 @@ func newAccessUser(kcuser *gocloak.User) *AccessUser {
 	return &AccessUser{
 		UserID: *kcuser.ID,
 		FobID:  fobID,
+		QRID:   qrID,
 		TTL:    (time.Hour * 24).Milliseconds(), // TODO: Load from keycloak
 	}
 }
